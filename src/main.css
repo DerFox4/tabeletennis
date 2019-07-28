@@ -1,0 +1,149 @@
+body {
+    text-align: center;
+    font-size: 20px;
+}
+
+h1 {
+    font-size: 30px;
+}
+
+button {
+    font-size: 20px;
+    color: gray;
+    background-color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+table {
+    margin: auto;
+    border: black solid 2px;
+    padding: 5px;
+}
+
+td, th {
+    border: black solid 1px;
+    padding: 20px;
+}
+
+/* ---------FontAwesome--------- */
+
+.FontAwesomeBox {
+    width: 20px;
+}
+
+.FontAwesomeBoxButton {
+    width: 35px;
+}
+
+/* -------Alle-Gegen-Alle------- */
+
+.TurnierBox {
+    width: 100%;
+    display: flex;
+}
+
+.Tabelle {
+    flex-grow: 2;
+    margin: auto;
+}
+
+.Turnier {
+    flex-grow: 10;
+    margin: 20px;
+    border-right-width: 3px;
+    border-right-color: black;
+    border-right-style: solid;
+}
+
+.Spieltag {
+    border: black solid 1px;
+    padding: 0 0 20px 0;
+    margin: 5px 15px;
+}
+
+.OhneErgebnis, .MitErgebnis {
+    display: flex;
+    justify-content: space-around;
+}
+
+.Ergebnis {
+    display: flex;
+}
+
+.Sätze {
+    display: flex;
+    color: silver;
+}
+
+.Satz {
+    width: 75px;
+    margin: auto;
+}
+
+.Gewinner {
+    font-weight: bold;
+    color: goldenrod;
+}
+
+/* -------Spieler-Eingabe------- */
+
+.Spielerliste {
+    display: flex;
+    justify-content: space-between;
+}
+
+.Formular {
+    line-height: 2;
+}
+
+/* --------Sieger-Ehrung-------- */
+
+.Erster {
+    font-size: 45px;
+    color: goldenrod;
+    display: flex;
+    justify-content: space-around;
+}
+
+.FontAwesomeWinner {
+    width: 45px;
+}
+
+.Zweiter {
+    font-size: 35px;
+    color: silver;
+    display: flex;
+    justify-content: space-around;
+}
+
+.FontAwesomeSecond {
+    width: 35px;
+}
+
+.Dritter {
+    font-size: 30px;
+    color: saddlebrown;
+    display: flex;
+    justify-content: space-around;
+}
+
+.FontAwesomeThird {
+    width: 30px;
+}
+
+/* --------EinfachesK.O.-------- */
+.KOBaum {
+    display: flex;
+    justify-content: space-around;
+}
+
+.Verlierer {
+    text-decoration: line-through;
+}
+
+/*----------SpielEingabe---------*/
+
+.WithBorder {
+    border : black 1px solid;
+}

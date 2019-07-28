@@ -1,0 +1,7 @@
+elm-stuff
+node_modules
+dist
+.idea
+tabletennis.iml
+.cache
+.DS_Store
