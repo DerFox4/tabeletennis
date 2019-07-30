@@ -1,14 +1,4 @@
-module Types.ProjectTyps exposing (Ergebnis, Game(..), QTTR, Satz, Spiel, Spieler, SpielerID, Spieltag, Turnier, defaultPlayer, maybeDefaultPlayer)
-
-
-type alias Turnier =
-    List Spieltag
-
-
-type alias Spieltag =
-    { spieleAmSpieltag : List Game
-    , spieltagNr : Int
-    }
+module Types.ProjectTyps exposing (Ergebnis, Game(..), QTTR, Satz, Spiel, Spieler, SpielerID, defaultPlayer, maybeDefaultPlayer)
 
 
 type Game
