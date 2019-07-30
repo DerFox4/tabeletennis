@@ -1,4 +1,4 @@
-module Types.ProjectTyps exposing (Ergebnis, Game(..), QTTR, Satz, SatzInfos, Spiel, Spieler, SpielerID, Spieltag, Turnier, defaultPlayer, maybeDefaultPlayer)
+module Types.ProjectTyps exposing (Ergebnis, Game(..), QTTR, Satz, Spiel, Spieler, SpielerID, Spieltag, Turnier, defaultPlayer, maybeDefaultPlayer)
 
 
 type alias Turnier =
@@ -8,13 +8,6 @@ type alias Turnier =
 type alias Spieltag =
     { spieleAmSpieltag : List Game
     , spieltagNr : Int
-    }
-
-
-type alias SatzInfos =
-    { gewonneneSätze : Int
-    , verloreneSätze : Int
-    , billanz : Int
     }
 
 

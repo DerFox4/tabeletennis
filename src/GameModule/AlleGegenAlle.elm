@@ -5,7 +5,7 @@ import FunctionHelper.SpielEingabe as SpielEingabe exposing (Msg(..))
 import Html exposing (Html, button, div, h3, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
-import Types.ProjectTyps as ProjectTyps exposing (Ergebnis, Game(..), Satz, SatzInfos, Spiel, Spieler, Spieltag, Turnier, defaultPlayer, maybeDefaultPlayer)
+import Types.ProjectTyps as ProjectTyps exposing (Ergebnis, Game(..), Satz, Spiel, Spieler, Spieltag, Turnier, defaultPlayer, maybeDefaultPlayer)
 import ViewHelper.MyFontAwesome as MyFontAwesome
 import ViewHelper.SiegerEhrung as SiegerEhrung
 import ViewHelper.Tabelle as Tabelle exposing (Tabelle, TabellenInfos)
