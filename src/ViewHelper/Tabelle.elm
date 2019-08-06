@@ -3,7 +3,8 @@ module ViewHelper.Tabelle exposing (Tabelle, TabellenInfos, berechneSatzverhaelt
 import Dict
 import Html exposing (Html, table, td, text, th, tr)
 import List.Extra
-import Types.ProjectTyps as ProjectTyps exposing (Ergebnis, Game(..), SatzInfos, Spieler, SpielerID, Turnier, defaultPlayer)
+import Types.ProjectTyps as ProjectTyps exposing (Ergebnis, Game(..), Spieler, SpielerID, defaultPlayer)
+import ViewHelper.GruppenTurnier exposing (Turnier)
 import ViewHelper.MyFontAwesome as MyFontAwesome
 
 
@@ -17,6 +18,13 @@ type alias TabellenInfos =
     , niederlagen : Int
     , absolvierteSpiele : Int
     , satzinfos : SatzInfos
+    }
+
+
+type alias SatzInfos =
+    { gewonneneSätze : Int
+    , verloreneSätze : Int
+    , billanz : Int
     }
 
 

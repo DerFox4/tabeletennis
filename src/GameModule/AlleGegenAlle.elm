@@ -1,11 +1,12 @@
-module GameModule.AlleGegenAlle exposing (Model, Msg(..), erstelleSpieltagNr, init, update, view)
+module GameModule.AlleGegenAlle exposing (Model, Msg(..), init, update, view)
 
 import Array exposing (Array)
 import FunctionHelper.SpielEingabe as SpielEingabe exposing (Msg(..))
 import Html exposing (Html, button, div, h3, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
-import Types.ProjectTyps as ProjectTyps exposing (Ergebnis, Game(..), Satz, SatzInfos, Spiel, Spieler, Spieltag, Turnier, defaultPlayer, maybeDefaultPlayer)
+import Types.ProjectTyps as ProjectTyps exposing (Ergebnis, Game(..), Satz, Spiel, Spieler)
+import ViewHelper.GruppenTurnier as GruppenTurnier exposing (Spieltag, Turnier)
 import ViewHelper.MyFontAwesome as MyFontAwesome
 import ViewHelper.SiegerEhrung as SiegerEhrung
 import ViewHelper.Tabelle as Tabelle exposing (Tabelle, TabellenInfos)
@@ -14,12 +15,6 @@ import ViewHelper.Tabelle as Tabelle exposing (Tabelle, TabellenInfos)
 type Fokus
     = Endstand
     | Turnierbaum
-
-
-type alias SpieltagHelper =
-    { spieleAmSpieltag : Array Game
-    , spieltagNr : Int
-    }
 
 
 type AktivesFenster
@@ -46,7 +41,7 @@ type Msg
 init : List Spieler -> Model
 init teilnehmer =
     { aktivesFenster = LaufendesTurnier
-    , turnier = erstelleTurnier teilnehmer
+    , turnier = GruppenTurnier.init teilnehmer
     , tabelle = Tabelle.init teilnehmer
     , fokusAuf = Nothing
     , teilnehmer = teilnehmer
@@ -60,40 +55,13 @@ update msg model =
             case msgSpielEingabe of
                 Close ->
                     let
-                        oldturnierArrayGame : Array SpieltagHelper
-                        oldturnierArrayGame =
-                            List.map
-                                (\spieltag ->
-                                    SpieltagHelper (spieltag.spieleAmSpieltag |> Array.fromList) spieltag.spieltagNr
-                                )
-                                model.turnier
-                                |> Array.fromList
-
-                        oldSpieltag : Array Game
-                        oldSpieltag =
-                            oldturnierArrayGame
-                                |> Array.get (modelSpielEingabe.spieltagNr - 1)
-                                |> Maybe.withDefault (SpieltagHelper (Array.fromList []) 0)
-                                |> (\spieltagHelper ->
-                                        spieltagHelper.spieleAmSpieltag
-                                   )
-
-                        newSpieltag : Array Game
-                        newSpieltag =
-                            Array.set (modelSpielEingabe.spielNr - 1) modelSpielEingabe.endstand oldSpieltag
-
-                        newTurnier : Turnier
-                        newTurnier =
-                            oldturnierArrayGame
-                                |> Array.set
-                                    (modelSpielEingabe.spieltagNr - 1)
-                                    (SpieltagHelper newSpieltag modelSpielEingabe.spieltagNr)
-                                |> transformArraySpieltagHelper
+                        turnierAfterUpdate =
+                            GruppenTurnier.update model.turnier modelSpielEingabe.endstand modelSpielEingabe.spieltagNr modelSpielEingabe.spielNr
                     in
                     { model
-                        | turnier = newTurnier
+                        | turnier = turnierAfterUpdate
                         , aktivesFenster = LaufendesTurnier
-                        , tabelle = Tabelle.update newTurnier model.teilnehmer |> Tabelle.sortiere
+                        , tabelle = Tabelle.update turnierAfterUpdate model.teilnehmer |> Tabelle.sortiere
                     }
 
                 _ ->
@@ -131,120 +99,10 @@ updateSpielEingabe model msg =
     UpdateSpielEingabe model msg
 
 
-transformArraySpieltagHelper : Array SpieltagHelper -> Turnier
-transformArraySpieltagHelper array =
-    array
-        |> Array.map
-            (\helper ->
-                Spieltag (helper.spieleAmSpieltag |> Array.toList) helper.spieltagNr
-            )
-        |> Array.toList
-
-
-erstelleTurnier : List Spieler -> Turnier
-erstelleTurnier listSpieler =
-    let
-        spieltage =
-            if modBy 2 (List.length listSpieler) == 0 then
-                List.range 1 (List.length listSpieler - 1)
-
-            else
-                List.range 1 (List.length listSpieler)
-    in
-    List.map
-        (\spieltagNummer ->
-            erstelleSpieltagNr listSpieler spieltagNummer
-        )
-        spieltage
-
-
-
-{-
-   Infos zum Algorithmus:
-   n = falls gerade
-           (Anzahl der Spieler - 1)
-       sonst
-           (Anzahl der Spieler)
-
-   k : SpielNr innerhalb einer Runde
-   k = (1 -> n//2)
-
-   i : Anzahl der Spieltage
-   i = 1 -> n
-
-   SpielerEins = modBy n (i + k)
-   SpielerZwei = modBy n (i - k)
-
-   Sonderfall bei gerader Anzahl an Spielern:
-   Letztes Spiel einer Runde : i gegen n
--}
-
-
-erstelleSpieltagNr : List Spieler -> Int -> Spieltag
-erstelleSpieltagNr listSpieler spieltagNr =
-    let
-        n =
-            if modBy 2 (List.length listSpieler) == 0 then
-                List.length listSpieler - 1
-
-            else
-                List.length listSpieler
-
-        kWerte =
-            List.range 1 (List.length listSpieler // 2)
-
-        i =
-            spieltagNr
-
-        arraySpieler =
-            defaultPlayer :: listSpieler |> Array.fromList
-
-        spieltag =
-            List.repeat (List.length kWerte) (OhneErgebnis 0 (Spiel defaultPlayer defaultPlayer))
-    in
-    Spieltag
-        (List.map
-            (\k ->
-                let
-                    playerOne =
-                        if modBy n (i + k) == 0 then
-                            n
-
-                        else
-                            modBy n (i + k)
-
-                    playerTwo =
-                        if modBy n (i - k) == 0 then
-                            n
-
-                        else
-                            modBy n (i - k)
-                in
-                if k == List.length spieltag && modBy 2 (List.length listSpieler) == 0 then
-                    OhneErgebnis
-                        (List.length listSpieler // 2)
-                        (Spiel
-                            (Array.get i arraySpieler |> maybeDefaultPlayer)
-                            (Array.get (n + 1) arraySpieler |> maybeDefaultPlayer)
-                        )
-
-                else
-                    OhneErgebnis
-                        k
-                        (Spiel
-                            (Array.get playerOne arraySpieler |> maybeDefaultPlayer)
-                            (Array.get playerTwo arraySpieler |> maybeDefaultPlayer)
-                        )
-            )
-            kWerte
-        )
-        i
-
-
 view : Model -> Html Msg
 view model =
     div []
-        [ if turnierBeendet model.turnier then
+        [ if GruppenTurnier.turnierBeendet model.turnier then
             div []
                 [ SiegerEhrung.viewSiegerEhrung (erstelleSpielerListeFuerSiegerehrung model.tabelle)
                 , div []
@@ -352,23 +210,3 @@ viewSatz ( punkteSpielerEins, punkteSpielerZwei ) =
 erstelleSpielerListeFuerSiegerehrung : Tabelle -> List Spieler
 erstelleSpielerListeFuerSiegerehrung tabelle =
     List.take 3 tabelle |> List.map (\( _, infos ) -> infos.spieler)
-
-
-turnierBeendet : Turnier -> Bool
-turnierBeendet turnier =
-    List.map
-        (\spieltag ->
-            List.map
-                (\game ->
-                    case game of
-                        MitErgebnis _ _ _ ->
-                            True
-
-                        OhneErgebnis _ _ ->
-                            False
-                )
-                spieltag.spieleAmSpieltag
-        )
-        turnier
-        |> List.concat
-        |> List.all (\game -> game == True)
